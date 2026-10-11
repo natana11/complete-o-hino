@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08090b">
+<meta name="description" content="Complete o Hino: jogo para jovens — digite a palavra que falta no verso de hinos antigos.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Complete o Hino">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" href="./assets/icon-192.png">
+<link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<title>COMPLETE O HINO · Jogo Jovem</title>
+<style>
+:root{--bg:#08090b;--panel:#141518;--panel2:#1b1c1f;--line:#2c2e32;--text:#f8f7f3;--muted:#a9aaad;--dim:#75777b;--yellow:#f7d53e;--ink:#101112;--green:#67e7a0;--red:#ff7a7a;--amber:#ffc56b;
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--text);background:var(--bg);font-synthesis:none;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overscroll-behavior-y:none}
+body{background:radial-gradient(ellipse 85% 40% at 105% -5%,rgba(247,213,62,.10),transparent 73%),radial-gradient(ellipse 85% 40% at -20% 95%,rgba(247,213,62,.05),transparent 70%),var(--bg);min-height:100dvh;-webkit-tap-highlight-color:transparent}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+a{color:inherit}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hide{display:none!important}
+#app{width:min(100%,560px);min-height:100dvh;margin:auto;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.brand{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.14em;font-weight:900}
+.brand b{color:var(--yellow)}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--yellow)}
+.logo svg{width:22px;height:22px}
+.topbtn{background:var(--panel2);border:1px solid #34363a;min-height:44px;padding:0 14px;border-radius:12px;color:#e2e2e2;font-size:13px;font-weight:800}
+.screen{flex:1;display:flex;flex-direction:column;animation:appear .24s ease both}
+.screen:focus{outline:none}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.eyebrow{letter-spacing:.17em;text-transform:uppercase;font-size:12px;font-weight:900;color:var(--yellow)}
+.cta{border:0;color:var(--ink);background:var(--yellow);box-shadow:0 9px 32px #f7d53e24;min-height:58px;padding:0 18px;width:100%;border-radius:17px;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s}
+.sub{border:1px solid #34363a;background:var(--panel2);color:#ececec;border-radius:15px;min-height:52px;padding:0 12px;font-size:14px;font-weight:800;width:100%}
+.cta:active,.sub:active,.choice:active{transform:scale(.97)}
+.banner{border:1px solid #6b5a1a;background:#221d0b;color:#f3e3a0;border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.45;margin:12px 0 0}
+
+/* início */
+.start{justify-content:center;padding:22px 0 8px}
+.start h1{font-size:clamp(50px,13.5vw,74px);line-height:.92;letter-spacing:-.06em;font-weight:950;margin:12px 0 16px}
+.start h1 b{color:var(--yellow)}
+.desc{color:#bdbec0;font-size:17px;line-height:1.6;margin:0 0 22px;max-width:440px}
+.introBox{padding:16px 18px;border-radius:19px;border:1px solid var(--line);background:var(--panel);margin-bottom:22px}
+.introBox .num{font-size:30px;letter-spacing:-.03em;font-weight:950}
+.introBox .num em{font-style:normal;color:var(--yellow)}
+.introBox .sm{color:var(--muted);font-size:14px;line-height:1.5;margin-top:4px}
+.choiceLabel{display:block;color:var(--muted);font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px}
+.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 20px}
+.choice{border:1px solid #36383c;border-radius:14px;color:#e0e0e0;background:var(--panel2);min-height:56px;font-size:18px;font-weight:900}
+.choice[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.startfoot{text-align:center;color:var(--dim);font-size:13px;margin-top:14px;line-height:1.5}
+
+/* pergunta */
+.play{padding-top:22px;justify-content:space-between}
+.gameTop{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:900;letter-spacing:.1em;color:#c2c2bf}
+.gameTop .score{color:var(--yellow)}
+.track{height:6px;background:#2b2b2c;border-radius:9px;overflow:hidden;margin-top:12px}
+.track span{display:block;height:100%;background:var(--yellow);transition:width .3s}
+.qwrap{flex:1;min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:18px 4px}
+.hymn{font-size:13px;font-weight:900;color:var(--yellow);letter-spacing:.12em;text-transform:uppercase}
+.hymnSub{font-size:13px;color:var(--dim);margin-top:4px}
+.verse{font-size:clamp(26px,7vw,40px);line-height:1.25;letter-spacing:-.025em;font-weight:900;margin:18px 0 0;text-wrap:balance}
+.blank{display:inline-block;color:var(--yellow);letter-spacing:.12em;border-bottom:4px solid var(--yellow);padding:0 4px;line-height:1.05;white-space:nowrap}
+.hintLine{margin:14px 0 0;font-size:14px;color:var(--muted)}
+.form{display:flex;flex-direction:column;gap:10px}
+.field{width:100%;min-height:62px;padding:0 18px;border-radius:17px;border:2px solid #45474b;background:#121315;color:#fff;font:inherit;font-size:22px;font-weight:800;text-align:center}
+.field:focus{border-color:var(--yellow);outline:none}
+.row{display:flex;gap:9px}.row>*{flex:1}
+.hint{text-align:center;font-size:12px;color:var(--dim);margin:10px 0 0;line-height:1.5}
+
+/* veredito */
+.verdict{padding-top:20px}
+.result{border:1px solid var(--line);border-radius:22px;padding:18px 18px 14px;margin:12px 0}
+.result.ok{border-color:#23603d;background:linear-gradient(120deg,#14251b,#171f1b)}
+.result.near{border-color:#7a5a1d;background:linear-gradient(120deg,#2a2112,#1f1c16)}
+.result.bad{border-color:#753f44;background:linear-gradient(120deg,#2d181b,#201c1e)}
+.result .status{font-size:12px;font-weight:950;letter-spacing:.16em;color:#d4d6d0}
+.result .announce{font-size:34px;font-weight:950;line-height:1.05;letter-spacing:-.04em;margin:6px 0}
+.result.ok .announce{color:var(--green)}.result.near .announce{color:var(--amber)}.result.bad .announce{color:var(--red)}
+.result .truth{font-size:16px;color:#e6e6e6;margin:6px 0 0;line-height:1.45}
+.fullVerse{font-size:clamp(22px,6vw,32px);font-weight:850;letter-spacing:-.02em;line-height:1.3;margin:6px 0 0;text-wrap:balance}
+.fullVerse mark{background:none;color:var(--yellow);border-bottom:3px solid var(--yellow)}
+.origin{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px 18px;margin-bottom:12px}
+.origin h3{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin:0 0 8px}
+.origin .ref{font-size:19px;font-weight:900;margin:0 0 6px}
+.origin p{margin:0;color:#c3c3c1;font-size:15px;line-height:1.55}
+.origin .kind{font-size:13px;color:var(--muted);margin-top:8px}
+.srclink{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;text-decoration:none;font-size:14px;font-weight:850;color:var(--yellow)}
+.vfoot{margin-top:auto;padding-top:8px}
+
+/* resultado */
+.finish{padding-top:22px}
+.finish h1{font-size:34px;letter-spacing:-.05em;margin:12px 0 4px}
+.finish .lead{color:var(--muted);font-size:14px;line-height:1.5;margin:0}
+.dial{--score:0;width:210px;aspect-ratio:1;margin:18px auto 10px;border-radius:50%;background:conic-gradient(var(--yellow) calc(var(--score) * 1%),#252627 0);display:grid;place-items:center}
+.dialIn{width:168px;aspect-ratio:1;border-radius:50%;background:#101113;display:flex;align-items:center;flex-direction:column;justify-content:center}
+.dialIn strong{font-size:56px;line-height:1;font-weight:950;letter-spacing:-.06em}
+.dialIn span{font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:900;margin-top:6px}
+.callout{text-align:center;color:var(--yellow);font-weight:950;font-size:19px;margin:0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:20px 0}
+.stat{border:1px solid var(--line);border-radius:17px;background:var(--panel);padding:14px;min-height:96px}
+.stat .n{font-size:26px;font-weight:950;letter-spacing:-.03em}
+.stat .t{font-size:13px;color:var(--muted);line-height:1.4;margin-top:6px}
+.tiny{font-size:13px;color:var(--dim);line-height:1.5;margin:0 0 16px}
+.finish .row{margin:10px 0 18px}
+
+/* revisão */
+.review{padding:20px 0 24px}
+.review h1{font-size:28px;margin:10px 0 4px;letter-spacing:-.04em}
+.review .lead{font-size:14px;color:var(--muted);line-height:1.6;margin:0}
+.search{width:100%;min-height:48px;padding:0 14px;border-radius:13px;border:1px solid #3c3e40;background:#151719;color:#fff;font:inherit;font-size:16px;margin-top:14px}
+.search:focus{border-color:var(--yellow);outline:none}
+.count{font-size:13px;color:var(--dim);margin-top:10px}
+.item{border:1px solid var(--line);background:var(--panel);border-radius:17px;padding:14px 15px;margin-top:9px}
+.item h2{font-size:18px;margin:0 0 4px}
+.item .meta{font-size:13px;color:var(--muted);line-height:1.5}
+.item ol{margin:8px 0 6px;padding-left:20px;color:#e2e1dc;font-size:15px;line-height:1.5}
+.item mark{background:none;color:var(--yellow);font-weight:900}
+.item a{color:var(--yellow);font-size:13px}
+.tag{border-radius:7px;padding:2px 7px;font-size:11px;letter-spacing:.06em;font-weight:900;background:#3a320f;color:var(--yellow)}
+.legal{font-size:12px;color:var(--dim);line-height:1.5;margin:18px 0 0}
+.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#2b2e32;border:1px solid #4a4d50;border-radius:14px;padding:13px 18px;color:#fff;font-size:14px;z-index:10;max-width:90vw}
+
+@media (min-width:1000px) and (min-height:600px){
+  #app{width:min(100%,1100px)}
+  .verse{font-size:clamp(44px,4.4vw,68px)}
+  .fullVerse{font-size:44px}
+  .form,.verdict>div,.finish,.start{max-width:860px;width:100%;margin-left:auto;margin-right:auto}
+  .field{min-height:76px;font-size:30px}
+  .hymn,.hymnSub{font-size:18px}
+  .result .announce{font-size:52px}.result .truth{font-size:22px}
+  .origin .ref{font-size:26px}.origin p{font-size:20px}
+  .vfoot .cta{max-width:780px;margin:0 auto;min-height:70px;font-size:21px}
+}
+@media (max-height:680px){.qwrap{min-height:150px;padding:8px}.verse{font-size:clamp(23px,6.2vw,32px);margin-top:10px}.verdict,.play{padding-top:10px}.result{padding:12px;margin:8px 0}.origin{padding:12px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app">
+<header>
+  <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="#111214" d="M9 17.5a3.5 3.5 0 1 1-2-3.16V4.8l12-2.4v12.1a3.5 3.5 0 1 1-2-3.16V6.9l-8 1.6z"/></svg></span><span>COMPLETE <b>O</b> HINO</span></div>
+  <button class="topbtn" id="topBtn" type="button">Ver hinos</button>
+</header>
+<p id="live" class="sr" aria-live="polite"></p>
+
+<section id="home" class="screen start" tabindex="-1" aria-labelledby="homeTitle">
+  <div class="eyebrow">Desafio da galera</div>
+  <h1 id="homeTitle">QUAL É A<br><b>PALAVRA?</b></h1>
+  <p class="desc">Aparece um verso de hino com uma palavra faltando. Digite a palavra certa. Quem canta na igreja vai lembrar… será?</p>
+  <div class="introBox"><div class="num" id="bankNum"></div><div class="sm">Hinos antigos, em domínio público.<br>Acento não conta; erro de uma letra vale “quase”.</div></div>
+  <h2 class="choiceLabel" id="roundLabel">Quantos versos nesta partida?</h2>
+  <div class="choices" role="group" aria-labelledby="roundLabel" id="roundChoices"></div>
+  <button class="cta" id="playBtn" type="button">COMEÇAR <span aria-hidden="true">→</span></button>
+  <p class="startfoot">Um verso por vez · resposta na hora · placar no final<br>Uma resposta por verso neste aparelho (a turma combina a palavra).</p>
+  <p class="banner hide" id="draftBanner">Conteúdo em revisão: o organizador ainda não aprovou os hinos.</p>
+</section>
+
+<section id="playing" class="screen play hide" tabindex="-1" aria-labelledby="verseText">
+  <div>
+    <div class="gameTop"><span id="counter">VERSO 1 / 10</span><span class="score" id="liveScore">0 ACERTOS</span></div>
+    <div class="track" role="progressbar" aria-label="Progresso da partida" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress"><span id="progressFill" style="width:0%"></span></div>
+  </div>
+  <div class="qwrap">
+    <div class="hymn" id="hymnTitle"></div>
+    <div class="hymnSub" id="hymnSub"></div>
+    <h2 class="verse" id="verseText"></h2>
+    <p class="hintLine" id="hintLine"></p>
+  </div>
+  <form class="form" id="answerForm" autocomplete="off">
+    <label class="sr" for="answerInput">Palavra que falta</label>
+    <input class="field" id="answerInput" type="text" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="send" placeholder="digite a palavra" maxlength="40">
+    <button class="cta" id="sendBtn" type="submit">RESPONDER</button>
+    <div class="row"><button class="sub" id="tipBtn" type="button">Dica: 1ª letra</button><button class="sub" id="skipBtn" type="button">Não sei</button></div>
+    <p class="hint">Enter responde. Acentos e maiúsculas não contam.</p>
+  </form>
+</section>
+
+<section id="reveal" class="screen verdict hide" tabindex="-1" aria-labelledby="announce">
+  <div>
+    <div class="eyebrow" id="revealCount">VERSO 1 / 10</div>
+    <div class="result" id="resultBox">
+      <div class="status" id="statusText"></div>
+      <h2 class="announce" id="announce"></h2>
+      <p class="truth" id="rightAnswer"></p>
+    </div>
+    <p class="fullVerse" id="fullVerse"></p>
+    <div class="origin" style="margin-top:14px">
+      <h3>Que hino é esse</h3>
+      <div class="ref" id="reference"></div>
+      <p id="credits"></p>
+      <p class="kind" id="pd"></p>
+      <a id="sourceLink" class="srclink" target="_blank" rel="noopener noreferrer">Ver a letra antiga ↗</a>
+    </div>
+  </div>
+  <div class="vfoot">
+    <button class="cta" id="nextBtn" type="button">PRÓXIMO VERSO <span aria-hidden="true">→</span></button>
+    <p class="hint">Enter avança. O link precisa de internet; o jogo funciona offline.</p>
+  </div>
+</section>
+
+<section id="finished" class="screen finish hide" tabindex="-1" aria-labelledby="finalTitle">
+  <div class="eyebrow">Resultado final</div>
+  <h1 id="finalTitle">A turma sabe os hinos?</h1>
+  <p class="lead">Percentual de versos completados certo (“quase” conta como certo).</p>
+  <div class="dial" id="dial" role="img" aria-label="0% de acerto"><div class="dialIn"><strong id="finalPercent">0%</strong><span>DE ACERTO</span></div></div>
+  <p class="callout" id="evaluation"></p>
+  <div class="stats">
+    <div class="stat"><div class="n" id="correctStat">0</div><div class="t">acertos</div></div>
+    <div class="stat"><div class="n" id="wrongStat">0</div><div class="t">erros ou “não sei”</div></div>
+    <div class="stat"><div class="n" id="nearStat">0</div><div class="t">“quase” (uma letra fora)</div></div>
+    <div class="stat"><div class="n" id="tipStat">0</div><div class="t">acertos com dica</div></div>
+  </div>
+  <p class="tiny">O placar conta uma resposta por verso, dada neste aparelho. É brincadeira para cantar junto depois.</p>
+  <button class="cta" id="newGameBtn" type="button">JOGAR DE NOVO <span aria-hidden="true">⟳</span></button>
+  <div class="row"><button class="sub" id="shareBtn" type="button">Compartilhar resultado</button><button class="sub" id="errorsBtn" type="button">Ver erros</button></div>
+</section>
+
+<section id="review" class="screen review hide" tabindex="-1" aria-labelledby="reviewTitle">
+  <div class="eyebrow" id="reviewEyebrow">Revisão do organizador</div>
+  <h1 id="reviewTitle">Hinos do jogo</h1>
+  <p class="lead" id="reviewLead">Todos os hinos e versos, com a palavra que falta destacada, autor, tradutor e fonte.</p>
+  <input id="searchInput" class="search" type="search" placeholder="Buscar hino, verso ou autor…" aria-label="Buscar hino, verso ou autor" autocomplete="off">
+  <p class="count" id="reviewCount" aria-live="polite"></p>
+  <div id="reviewList"></div>
+  <p class="legal" id="legal"></p>
+  <button type="button" class="sub" id="backBtn" style="margin-top:18px">← Voltar</button>
+</section>
+</main>
+
+<script>window.DADOS = {"meta":{"titulo":"COMPLETE O HINO","aprovado":false,"aprovado_por":null,"aprovado_em":null,"aviso":"Somente hinos em domínio público: autor e tradutor falecidos até 1955 (Lei 9.610/98, art. 41). Ortografia atualizada; palavras do texto antigo mantidas."},"hinos":[{"id":1,"titulo":"Assim como estou","hinario":"Salmos e Hinos (ed. 1959) nº 39","autor_original":"Charlotte Elliott (\"Just as I am\")","autor_original_morte":1871,"tradutor_pt":"Robert Reid Kalley (índice: R. R. K., escrito em 1859)","tradutor_pt_morte":1888,"dominio_publico":"Autora morreu em 1871 e tradutor em 1888; ambos antes de 1955.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n55/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Elliott_Charlotte | https://hymnary.org/person/Kalley_Robert | índice de autores do próprio hinário: https://archive.org/details/343168749SalmosEHinos/page/n743/mode/1up","auditoria":"verificado","nota":"1ª estrofe conferida também na 1ª edição brasileira (Psalmos e Hymnos, 1861, archive.org/details/PsalmosEHymnos1861), mesma redação. Não é a versão moderna 'Tal qual estou'.","trechos":[{"id":"1.1","verso":"Senão que por mim vieste a morrer,","palavra":"morrer"},{"id":"1.2","verso":"E me convidaste a Ti recorrer;","palavra":"convidaste"},{"id":"1.3","verso":"Bendito Jesus, me chego a Ti!","palavra":"Bendito"}]},{"id":2,"titulo":"Mais perto quero estar","hinario":"Salmos e Hinos (ed. 1959) nº 219","autor_original":"Sarah Flower Adams (\"Nearer, my God, to Thee\")","autor_original_morte":1848,"tradutor_pt":"João Gomes da Rocha (J. G. R., escrito em 1888)","tradutor_pt_morte":1947,"dominio_publico":"Autora morreu em 1848 e tradutor em 1947; ambos até 1955.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n246/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/text/mais_perto_quero_estar_meu_deus_de_ti | https://www.luterano.org.br/joao-gomes-da-rocha-1861-1947","auditoria":"verificado","nota":"Texto lido na página impressa 243 (estrofes). J. G. Rocha: 14/03/1861 a 11/07/1947, Londres (luterano.org.br).","trechos":[{"id":"2.1","verso":"Sempre hei de suplicar","palavra":"suplicar"},{"id":"2.2","verso":"\"Mais perto quero estar,","palavra":"perto"},{"id":"2.3","verso":"Paz e descanso a mim","palavra":"descanso"}]},{"id":3,"titulo":"Conta-me a velha história","hinario":"Salmos e Hinos (ed. 1959) nº 130","autor_original":"Katherine (Kate) Hankey (\"Tell me the old, old story\")","autor_original_morte":1911,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1874)","tradutor_pt_morte":1907,"dominio_publico":"Autora morreu em 1911 e tradutora em 1907; ambas antes de 1955.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n159/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/hymn/CC1971/50 | https://hymnary.org/person/Kalley_SP","auditoria":"verificado","nota":"Redação de Kalley; diferente da versão adventista 'Contai-me a velha história'.","trechos":[{"id":"3.1","verso":"Conta-me a velha História","palavra":"velha"},{"id":"3.2","verso":"Do grande Salvador;","palavra":"Salvador"},{"id":"3.3","verso":"De Cristo e Seu amor.","palavra":"amor"}]},{"id":4,"titulo":"Doxologia (A Deus, supremo Benfeitor)","hinario":"Salmos e Hinos (ed. 1959) nº 177","autor_original":"Thomas Ken (\"Praise God, from whom all blessings flow\")","autor_original_morte":1711,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1861)","tradutor_pt_morte":1907,"dominio_publico":"Autor morreu em 1711 e tradutora em 1907.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n209/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/text/a_deus_supremo_benfeitor | https://hymnary.org/person/Kalley_SP","auditoria":"verificado","nota":"Estrofe única. Ortografia atualizada: 'dêem' > 'deem'.","trechos":[{"id":"4.1","verso":"A Deus, Supremo Benfeitor,","palavra":"Benfeitor"},{"id":"4.2","verso":"Anjos e homens deem louvor;","palavra":"louvor"},{"id":"4.3","verso":"E ao Espírito, glória dai.","palavra":"glória"}]},{"id":5,"titulo":"Comigo habita","hinario":"Salmos e Hinos (ed. 1959) nº 222","autor_original":"Henry Francis Lyte (\"Abide with me\")","autor_original_morte":1847,"tradutor_pt":"João Gomes da Rocha (J. G. R., escrito em 1888)","tradutor_pt_morte":1947,"dominio_publico":"Autor morreu em 1847 e tradutor em 1947.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n248/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Lyte_HF | https://www.luterano.org.br/joao-gomes-da-rocha-1861-1947","auditoria":"verificado","nota":"Na fonte o 2º verso traz travessão: 'As trevas crescem:—eis, Senhor, convém'; aqui só a pontuação foi simplificada.","trechos":[{"id":"5.1","verso":"Comigo habita, ó Deus! a noite vem,","palavra":"noite"},{"id":"5.2","verso":"As trevas crescem: eis, Senhor, convém","palavra":"trevas"},{"id":"5.3","verso":"Oh! vem fazer comigo habitação!","palavra":"habitação"}]},{"id":6,"titulo":"Rocha eterna","hinario":"Salmos e Hinos (ed. 1959) nº 274","autor_original":"Augustus Montague Toplady (\"Rock of Ages\")","autor_original_morte":1778,"tradutor_pt":"João Gomes da Rocha (J. G. R., escrito em 1898)","tradutor_pt_morte":1947,"dominio_publico":"Autor morreu em 1778 e tradutor em 1947.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n322/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Toplady_AM | https://www.luterano.org.br/joao-gomes-da-rocha-1861-1947","auditoria":"verificado","nota":"Atenção: é a versão de J. G. Rocha ('Rocha eterna! meu Jesus! Como posso me salvar?'), não a 'Rocha eterna, foi na cruz' dos hinários modernos; os jovens podem conhecer outra letra.","trechos":[{"id":"6.1","verso":"Rocha eterna! meu Jesus!","palavra":"eterna"},{"id":"6.2","verso":"Quero me abrigar em Ti.","palavra":"abrigar"},{"id":"6.3","verso":"Nada trago nestas mãos,","palavra":"trago"}]},{"id":7,"titulo":"Quão bondoso amigo é Cristo","hinario":"Salmos e Hinos (ed. 1959) nº 365","autor_original":"Joseph Medlicott Scriven (\"What a friend we have in Jesus\")","autor_original_morte":1886,"tradutor_pt":"Robert Hawkey Moreton (R. H. M., 1886, 'do espanhol')","tradutor_pt_morte":1917,"dominio_publico":"Autor morreu em 1886 e tradutor em 1917.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n419/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/roberto-hawkey-moreton-1844-1917/ | https://www.luterano.org.br/quao-bondoso-amigo-e-cristo/","auditoria":"verificado","nota":"O índice do hinário marca 'do esp.' (versão feita a partir do espanhol); o tradutor espanhol intermediário não foi identificado nesta pesquisa. Morte de Scriven: hymnary/luterano dão 1886 (o texto da página luterana menciona 1889) — em qualquer caso antes de 1955. Moreton: nasceu em 1844, morreu no Porto em 14/03/1917.","trechos":[{"id":"7.1","verso":"Quão bondoso amigo é Cristo!","palavra":"bondoso"},{"id":"7.2","verso":"Carregou co'a nossa dor,","palavra":"Carregou"},{"id":"7.3","verso":"Tudo a Deus em oração.","palavra":"oração"}]},{"id":8,"titulo":"Noventa e nove ovelhas","hinario":"Salmos e Hinos (ed. 1959) nº 154","autor_original":"Elizabeth Cecilia Clephane (\"The Ninety and Nine\")","autor_original_morte":1869,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1877)","tradutor_pt_morte":1907,"dominio_publico":"Autora morreu em 1869 e tradutora em 1907.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n188/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://en.wikipedia.org/wiki/Elizabeth_Clephane | https://hymnary.org/person/Kalley_SP | índice: https://archive.org/details/343168749SalmosEHinos/page/n750/mode/1up","auditoria":"verificado","nota":"Estrofes impressas na p. 185 (nº 154 assinado K.). A nota 'Propriedade de Morgan & Scott' na página refere-se à música, que o jogo não usa.","trechos":[{"id":"8.1","verso":"Noventa e nove ovelhas há","palavra":"ovelhas"},{"id":"8.2","verso":"Seguras no curral;","palavra":"curral"},{"id":"8.3","verso":"Distante do terno e fiel Pastor.","palavra":"Pastor"}]},{"id":9,"titulo":"Ó dia alegre","hinario":"Salmos e Hinos (ed. 1959) nº 159","autor_original":"Philip Doddridge (\"O happy day\")","autor_original_morte":1751,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1877)","tradutor_pt_morte":1907,"dominio_publico":"Autor morreu em 1751 e tradutora em 1907.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n192/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Doddridge_Philip | https://hymnary.org/person/Kalley_SP | índice: https://archive.org/details/343168749SalmosEHinos/page/n750/mode/1up","auditoria":"verificado","nota":"Coro: 'Dia feliz! dia feliz! / Quando em Jesus me satisfiz.'","trechos":[{"id":"9.1","verso":"Oh dia alegre! eu abracei","palavra":"abracei"},{"id":"9.2","verso":"Dia feliz! dia feliz!","palavra":"feliz"},{"id":"9.3","verso":"Quando em Jesus me satisfiz.","palavra":"satisfiz"}]},{"id":10,"titulo":"Cristo já ressuscitou","hinario":"Salmos e Hinos (ed. 1959) nº 202","autor_original":"Lyra Davidica (1708), anônimo; tradicionalmente creditado a Charles Wesley (1707-1788)","autor_original_morte":1788,"tradutor_pt":"Henry Maxwell Wright (H. M. W., 1887)","tradutor_pt_morte":1931,"dominio_publico":"Original de 1708 (crédito mais tardio: Charles Wesley, morto em 1788); tradutor morreu em 1931.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n232/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/hymn/LEA1982/116 | https://www.luterano.org.br/henry-maxwell-wright-1849-1931","auditoria":"verificado","nota":"Wright: 07/12/1849 Lisboa a 25/01/1931 Porto (luterano.org.br). Fonte: 'Sôbre' > 'Sobre'.","trechos":[{"id":"10.1","verso":"Sobre a morte triunfou;","palavra":"triunfou"},{"id":"10.2","verso":"Tudo consumado está!","palavra":"consumado"},{"id":"10.3","verso":"Uma vez na cruz sofreu;","palavra":"sofreu"}]},{"id":11,"titulo":"Chuvas de bênção","hinario":"Salmos e Hinos (ed. 1959) nº 331","autor_original":"Daniel Webster Whittle (\"There shall be showers of blessing\")","autor_original_morte":1901,"tradutor_pt":"Salomão Luiz Ginsburg (S. L. G., escrito em 10/06/1890)","tradutor_pt_morte":1927,"dominio_publico":"Autor morreu em 1901 e tradutor em 1927.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n389/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/daniel-webster-whittle-1840-1901/ | https://www.luterano.org.br/salomao-luiz-ginsburg-1867-1927/","auditoria":"verificado","nota":"Ortografia: 'benção' > 'bênção'. A nota 'Propriedade de Ch. M. Alexander' refere-se à música.","trechos":[{"id":"11.1","verso":"É a promessa de Deus.","palavra":"promessa"},{"id":"11.2","verso":"Gotas benditas só temos;","palavra":"Gotas"},{"id":"11.3","verso":"Chuvas rogamos a Deus.","palavra":"rogamos"}]},{"id":12,"titulo":"Tudo entregarei (Tudo, ó Cristo, a Ti entrego)","hinario":"Salmos e Hinos (ed. 1959) nº 534","autor_original":"Judson Wheeler Van DeVenter (\"I surrender all\")","autor_original_morte":1939,"tradutor_pt":"Salomão Luiz Ginsburg (S. L. G., 1907)","tradutor_pt_morte":1927,"dominio_publico":"Autor morreu em 1939 e tradutor em 1927; ambos até 1955.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n586/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/VanDeVenter_JW | https://www.luterano.org.br/salomao-luiz-ginsburg-1867-1927/ | índice: https://archive.org/details/343168749SalmosEHinos/page/n754/mode/1up","auditoria":"verificado","nota":"Coro 'Tudo entregarei! / Tudo, sim, Jesus bendito, / Por Ti deixarei!'.","trechos":[{"id":"12.1","verso":"Tudo entregarei!","palavra":"entregarei"},{"id":"12.2","verso":"Por Ti tudo deixarei;","palavra":"deixarei"},{"id":"12.3","verso":"Sempre a Ti eu seguirei.","palavra":"seguirei"}]},{"id":13,"titulo":"Saudai o nome de Jesus","hinario":"Salmos e Hinos (ed. 1959) nº 536","autor_original":"Edward Perronet (\"All hail the power of Jesus' name\")","autor_original_morte":1792,"tradutor_pt":"Justus Henry Nelson (J. H. N., escrito em junho de 1890)","tradutor_pt_morte":1937,"dominio_publico":"Autor morreu em 1792 e tradutor em 1937.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n589/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Perronet_Edward | https://en.wikipedia.org/wiki/Justus_Henry_Nelson","auditoria":"verificado","nota":"Nesta edição a 1ª linha é 'Saudai ao nome de Jesus' (com 'ao'). Nelson: 22/12/1850 a 06/02/1937 (Wikipedia; a Boston University dá nascimento em 1851).","trechos":[{"id":"13.1","verso":"Saudai ao nome de Jesus;","palavra":"Saudai"},{"id":"13.2","verso":"Arcanjos, vos prostrai,","palavra":"Arcanjos"},{"id":"13.3","verso":"Com glória coroai!","palavra":"coroai"}]},{"id":14,"titulo":"Mais de Cristo","hinario":"Salmos e Hinos (ed. 1959) nº 501","autor_original":"Eliza Edmunds Hewitt (\"More about Jesus\")","autor_original_morte":1920,"tradutor_pt":"Henry Maxwell Wright (H. M. W., escrito em 1900)","tradutor_pt_morte":1931,"dominio_publico":"Autora morreu em 1920 e tradutor em 1931.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n548/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.hymnary.org/hymn/HEC1999/349 | https://www.luterano.org.br/henry-maxwell-wright-1849-1931","auditoria":"verificado","nota":"Coro: 'Mais, mais de Cristo! / Mais do Teu puro e santo amor, / Mais de Ti mesmo, ó Salvador!'.","trechos":[{"id":"14.1","verso":"Mais da Sua compaixão,","palavra":"compaixão"},{"id":"14.2","verso":"Mais da Sua mansidão.","palavra":"mansidão"},{"id":"14.3","verso":"Mais do Teu puro e santo amor,","palavra":"santo"}]},{"id":15,"titulo":"Eu sei em quem tenho crido (Não sei porque de Deus o amor)","hinario":"Salmos e Hinos (ed. 1959) nº 570","autor_original":"Daniel Webster Whittle (\"I know whom I have believed\")","autor_original_morte":1901,"tradutor_pt":"Justus Henry Nelson (J. H. N., escrito em 17/12/1889)","tradutor_pt_morte":1937,"dominio_publico":"Autor morreu em 1901 e tradutor em 1937.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n643/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/daniel-webster-whittle-1840-1901/ | https://en.wikipedia.org/wiki/Justus_Henry_Nelson | índice: https://archive.org/details/343168749SalmosEHinos/page/n749/mode/1up","auditoria":"verificado","nota":"A identificação do original em inglês (Whittle) é pelo coro; o índice do hinário só dá o tradutor (J. H. N.). Nota 'Propriedade de Charles M. Alexander' refere-se à música.","trechos":[{"id":"15.1","verso":"Mas eu sei em quem tenho crido,","palavra":"crido"},{"id":"15.2","verso":"Pra guardar o meu tesouro","palavra":"tesouro"},{"id":"15.3","verso":"Até o dia final.","palavra":"final"}]},{"id":16,"titulo":"O Lírio dos vales (Achei um bom Amigo)","hinario":"Salmos e Hinos (ed. 1959) nº 402","autor_original":"Charles William Fry (\"The Lily of the Valley\", 1881)","autor_original_morte":1882,"tradutor_pt":"Justus Henry Nelson (J. H. N., escrito em 19/01/1890)","tradutor_pt_morte":1937,"dominio_publico":"Autor morreu em 1882 e tradutor em 1937.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n458/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://en.wikipedia.org/wiki/The_Lily_of_the_Valley | https://hymnary.org/person/Fry_CW | https://en.wikipedia.org/wiki/Justus_Henry_Nelson","auditoria":"verificado","nota":"Ortografia: 'Estrêla' > 'Estrela'. A ligação com o original de Fry vem do conteúdo (Cântico 2:1, 'Lírio dos vales', 'Estrela da manhã'), não de crédito impresso no hinário; o hinário credita só J. H. N.","trechos":[{"id":"16.1","verso":"Dos vales é o Lírio;","palavra":"Lírio"},{"id":"16.2","verso":"A Estrela da manhã,","palavra":"Estrela"},{"id":"16.3","verso":"O Escolhido dos milhares para mim.","palavra":"milhares"}]},{"id":17,"titulo":"Eis dos anjos a harmonia","hinario":"Salmos e Hinos (ed. 1959) nº 317","autor_original":"Charles Wesley (\"Hark! the herald angels sing\")","autor_original_morte":1788,"tradutor_pt":"Robert Hawkey Moreton (R. H. M., 1887)","tradutor_pt_morte":1917,"dominio_publico":"Autor morreu em 1788 e tradutor em 1917.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n372/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/lci-387-eis-dos-anjos/ | https://www.luterano.org.br/roberto-hawkey-moreton-1844-1917/","auditoria":"verificado","nota":"Hino de Natal.","trechos":[{"id":"17.1","verso":"Eis dos anjos a harmonia!","palavra":"harmonia"},{"id":"17.2","verso":"Paz aos homens e alegria,","palavra":"alegria"},{"id":"17.3","verso":"Nasce Cristo o Redentor.","palavra":"Redentor"}]},{"id":18,"titulo":"Quero estar ao pé da cruz","hinario":"Hymnos Evangelicos e Canticos Sagrados (Boyle, 1888) nº 100; Salmos e Hinos (ed. 1959) nº 353","autor_original":"Fanny Jane Crosby (\"Jesus, keep me near the cross\", 1869)","autor_original_morte":1915,"tradutor_pt":"Júlio César Ribeiro (J. C. R., 1881)","tradutor_pt_morte":1890,"dominio_publico":"Autora morreu em 1915 e tradutor em 1890.","fonte_texto_url":"https://archive.org/details/himnos-evangelicos-e-canticos-sagrados-1888/page/n75/mode/1up","fontes_extra":["https://archive.org/details/343168749SalmosEHinos/page/n409/mode/1up"],"fonte_autoria_url":"https://www.hymnary.org/hymn/HPCC1991/395 | https://hymnary.org/person/Ribeiro_JC | https://www.luterano.org.br/frances-jane-fanny-crosby-1820-1915/ | índice de Boyle 1888 credita 'J. C. Ribeiro': https://archive.org/details/himnos-evangelicos-e-canticos-sagrados-1888/page/n401/mode/1up","auditoria":"verificado","nota":"Cuidado: a ed. 1959 e a de 1888 (Boyle) divergem no resto da 1ª estrofe e no coro ('Que tão rica fonte...' x 'Sim, da cruz de Cristo...'), sinal de revisão posterior de autor não identificado. Por isso só entram versos idênticos nas duas edições (o de 1888 é anterior a qualquer revisor que pudesse ter morrido depois de 1955). Ortografia: 'estrêla'/'estrella' > 'estrela', 'alli' > 'ali'.","trechos":[{"id":"18.1","verso":"Quero estar ao pé da cruz,","palavra":"cruz"},{"id":"18.2","verso":"A tremer ao pé da cruz,","palavra":"tremer"},{"id":"18.3","verso":"Matutina estrela ali","palavra":"Matutina"}]},{"id":19,"titulo":"Avante, ó crentes","hinario":"Salmos e Hinos (ed. 1959) nº 147","autor_original":"George Duffield Jr. (\"Stand up, stand up for Jesus\")","autor_original_morte":1888,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1877; assinado K.)","tradutor_pt_morte":1907,"dominio_publico":"Autor morreu em 1888 e tradutora em 1907.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n177/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/hymn/HEC1999/211 | https://hymnary.org/person/Kalley_SP","auditoria":"verificado","nota":"1ª linha: 'Avante! Avante! ó crentes!'.","trechos":[{"id":"19.1","verso":"Soldados de Jesus!","palavra":"Soldados"},{"id":"19.2","verso":"Erguei Seu estandarte,","palavra":"estandarte"},{"id":"19.3","verso":"Lutai por Sua cruz!","palavra":"Lutai"}]},{"id":20,"titulo":"Ouço a benigna voz","hinario":"Salmos e Hinos (ed. 1959) nº 133","autor_original":"Lewis Hartsough (\"I hear thy welcome voice\")","autor_original_morte":1919,"tradutor_pt":"Sarah Poulton Kalley (S. P. K., 1875; assinado K.)","tradutor_pt_morte":1907,"dominio_publico":"Autor morreu em 1919 e tradutora em 1907.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n163/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Hartsough_Lewis | https://hymnary.org/person/Kalley_SP | índice: https://archive.org/details/343168749SalmosEHinos/page/n751/mode/1up","auditoria":"verificado","nota":"Original identificado pelo conteúdo e pelo coro ('I am coming, Lord!' = 'Venho, meu Senhor!'); o hinário só credita a tradutora. Hymnary dá 1828-1919 para Hartsough (Julian dá nascimento em 1823).","trechos":[{"id":"20.1","verso":"Ouço a benigna voz,","palavra":"benigna"},{"id":"20.2","verso":"Chama-me para a salvação,","palavra":"salvação"},{"id":"20.3","verso":"Venho, meu Senhor!","palavra":"Venho"}]},{"id":21,"titulo":"Oh! vinde, fiéis","hinario":"Salmos e Hinos (ed. 1959) nº 439; Hymnos Evangelicos (Boyle, 1888) nº 118","autor_original":"\"Adeste fideles\" (latim), atribuído a John Francis Wade","autor_original_morte":1786,"tradutor_pt":"James Theodore Houston (J. T. H., 1881)","tradutor_pt_morte":1929,"dominio_publico":"Texto latino do séc. XVIII (Wade morreu em 1786); tradutor morreu em 1929.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n490/mode/1up","fontes_extra":["https://archive.org/details/himnos-evangelicos-e-canticos-sagrados-1888/page/n85/mode/1up"],"fonte_autoria_url":"https://hymnary.org/person/Wade_JF | https://hymnary.org/person/Houston_JT | https://www.luterano.org.br/o-vinde-fieis | índice de Boyle 1888 ('Houston'): https://archive.org/details/himnos-evangelicos-e-canticos-sagrados-1888/page/n398/mode/1up","auditoria":"verificado","nota":"Versos idênticos em 1888 e 1959 (a 1ª linha difere na ordem: 1888 'fiéis, alegres triunfantes', 1959 'fiéis triunfantes alegres', por isso não entrou). O portal luterano informa que a tradução de Houston foi alterada em 1945 para o Hinário Evangélico de 1962 — essa redação moderna NÃO é a usada aqui. Ortografia: 'promettido' > 'prometido', 'Christo' > 'Cristo'.","trechos":[{"id":"21.1","verso":"Sim, vinde a Belém, já movidos de amor;","palavra":"Belém"},{"id":"21.2","verso":"Nasceu vosso Rei, o Cristo prometido,","palavra":"prometido"},{"id":"21.3","verso":"Oh! vinde, adoremos a nosso Senhor.","palavra":"adoremos"}]},{"id":22,"titulo":"Mil línguas eu quisera ter","hinario":"Salmos e Hinos (ed. 1959) nº 545","autor_original":"Charles Wesley (\"O for a thousand tongues to sing\")","autor_original_morte":1788,"tradutor_pt":"Robert Hawkey Moreton (R. H. M., 1914)","tradutor_pt_morte":1917,"dominio_publico":"Autor morreu em 1788 e tradutor em 1917.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n598/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/roberto-hawkey-moreton-1844-1917/ | https://hymnary.org/hymn/MVPC2019/13 (original de Wesley, outra tradução) | índice: https://archive.org/details/343168749SalmosEHinos/page/n749/mode/1up","auditoria":"verificado","nota":"Original identificado pelo conteúdo (o hinário só credita R. H. M.). 'Propriedade da Srta Lilian J. Gaul' refere-se à música.","trechos":[{"id":"22.1","verso":"Mil línguas eu quisera ter,","palavra":"línguas"},{"id":"22.2","verso":"Para entoar louvor","palavra":"entoar"},{"id":"22.3","verso":"Potente Salvador.","palavra":"Potente"}]},{"id":23,"titulo":"Da Igreja o alicerce","hinario":"Salmos e Hinos (ed. 1959) nº 563","autor_original":"Samuel John Stone (\"The Church's one foundation\")","autor_original_morte":1900,"tradutor_pt":"Robert Hawkey Moreton (R. H. M., escrito em nov. 1907)","tradutor_pt_morte":1917,"dominio_publico":"Autor morreu em 1900 e tradutor em 1917.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n629/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/lci-573-da-igreja-e-fundamento/ | https://www.luterano.org.br/roberto-hawkey-moreton-1844-1917/","auditoria":"verificado","nota":"Redação antiga ('Da Igreja o alicerce'); hinários modernos trazem 'Da Igreja é fundamento', revisada.","trechos":[{"id":"23.1","verso":"Da Igreja o alicerce","palavra":"alicerce"},{"id":"23.2","verso":"Em seu poder descansa;","palavra":"descansa"},{"id":"23.3","verso":"É forte em seu amor.","palavra":"forte"}]},{"id":24,"titulo":"Pendão Real (Um pendão real vos entregou o Rei)","hinario":"Salmos e Hinos (ed. 1959) nº 255","autor_original":"Henry Maxwell Wright (H. M. W., 'e. Julho 4, 1893'); o texto parece versão de 'There's a royal banner given for display' (Daniel W. Whittle), identificado só pelo conteúdo","autor_original_morte":1931,"tradutor_pt":"Henry Maxwell Wright (H. M. W.)","tradutor_pt_morte":1931,"dominio_publico":"H. M. Wright morreu em 1931. Se for versão do hino de Whittle, este morreu em 1901. Nos dois casos, todos morreram antes de 1955.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n292/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://www.luterano.org.br/henry-maxwell-wright-1849-1931/ | https://www.luterano.org.br/daniel-webster-whittle-1840-1901/ | índice: https://archive.org/details/343168749SalmosEHinos/page/n754/mode/1up","auditoria":"verificado","nota":"O Luterano diz que Wright é 'autor de 151 hinos (entre eles Um pendão real)'. A ligação com Whittle é inferência pelo conteúdo e não muda o domínio público. 'Propriedade de Ch. M. Alexander' refere-se à música.","trechos":[{"id":"24.1","verso":"Um pendão real vos entregou o Rei,","palavra":"pendão"},{"id":"24.2","verso":"Por Cristo prontos a sofrer!","palavra":"prontos"},{"id":"24.3","verso":"Firmes sempre até morrer!","palavra":"Firmes"}]},{"id":25,"titulo":"Há um país de alto prazer","hinario":"Salmos e Hinos (ed. 1959) nº 56","autor_original":"Isaac Watts ('There is a land of pure delight'), identificado pelo conteúdo","autor_original_morte":1748,"tradutor_pt":"Kalley (assinado 'K.' no hino; o índice dá S. P. K., Sarah Poulton Kalley, 'e. Junho 1861')","tradutor_pt_morte":1907,"dominio_publico":"Watts morreu em 1748. Sarah P. Kalley morreu em 1907; se fosse Robert R. Kalley, ele morreu em 1888.","fonte_texto_url":"https://archive.org/details/343168749SalmosEHinos/page/n72/mode/1up","fontes_extra":[],"fonte_autoria_url":"https://hymnary.org/person/Kalley_SP | https://hymnary.org/text/there_is_a_land_of_pure_delight_where_sa | índice: https://archive.org/details/343168749SalmosEHinos/page/n747/mode/1up","auditoria":"verificado","nota":"Ortografia atualizada: 'Ha' virou 'Há' e 'paiz/pais' virou 'país'. 'crêm' foi mantido como está impresso (hoje seria 'creem'), mas não é a palavra-alvo. Hino pouco cantado pelos jovens hoje.","trechos":[{"id":"25.1","verso":"Há um país de alto prazer,","palavra":"prazer"},{"id":"25.2","verso":"Morada dos que crêm;","palavra":"Morada"},{"id":"25.3","verso":"Lá primavera sempre está","palavra":"primavera"}]}]};</script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const DATA = window.DADOS || {meta:{}, hinos:[]};
+const HINOS = DATA.hinos;
+const ITENS = HINOS.flatMap(h => h.trechos.map(t => ({...t, hino: h})));
+const VIEWS = ['home','playing','reveal','finished','review'];
+const st = {count: 10, deck: [], i: 0, results: [], tip: false, screen: 'home', back: 'home', onlyErrors: false};
+
+// --- lógica pura (testável) ---
+function shuffle(a, rnd = Math.random){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+// Embaralha e evita o mesmo hino em sequência sempre que possível.
+function buildDeck(items, n, rnd = Math.random){
+  const pool = shuffle(items.slice(), rnd).slice(0, Math.min(n, items.length));
+  for(let i = 1; i < pool.length; i++){
+    if(pool[i].hino.id !== pool[i-1].hino.id) continue;
+    const j = pool.findIndex((x, k) => k > i && x.hino.id !== pool[i-1].hino.id && (k+1 >= pool.length || pool[k+1].hino.id !== pool[i].hino.id));
+    if(j > 0) [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+}
+function norm(t){ return (t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9ç]/g,'').replace(/ç/g,'c'); }
+function lev(a, b){   // distância de edição; troca de duas letras vizinhas conta 1
+  const m = a.length, n = b.length; if(Math.abs(m-n) > 1) return 2;
+  const d = Array.from({length:m+1}, (_, i) => Array.from({length:n+1}, (_, j) => i ? (j ? 0 : i) : j));
+  for(let i = 1; i <= m; i++) for(let j = 1; j <= n; j++){
+    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+    if(i > 1 && j > 1 && a[i-1] === b[j-2] && a[i-2] === b[j-1]) d[i][j] = Math.min(d[i][j], d[i-2][j-2] + 1);
+  }
+  return d[m][n];
+}
+// 'certo' | 'quase' (uma letra fora, palavra com 5+ letras) | 'errado'
+function judge(typed, word){
+  const a = norm(typed), b = norm(word);
+  if(!a) return 'errado';
+  if(a === b) return 'certo';
+  if(b.length >= 5 && lev(a, b) === 1) return 'quase';
+  return 'errado';
+}
+// Divide o verso em antes / palavra / depois (primeira ocorrência como palavra inteira).
+function splitVerse(verse, word){
+  const re = new RegExp('(^|[^\\p{L}])(' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![\\p{L}])', 'u');
+  const m = re.exec(verse);
+  if(!m) return null;
+  const start = m.index + m[1].length;
+  return [verse.slice(0, start), verse.slice(start, start + word.length), verse.slice(start + word.length)];
+}
+function pct(ok, total){ return total > 0 ? Math.round(ok/total*100) : 0; }
+function summary(results){
+  const ok = results.filter(r => r.verdict !== 'errado');
+  return {total: results.length, ok: ok.length, wrong: results.length - ok.length, near: results.filter(r => r.verdict === 'quase').length,
+          tip: ok.filter(r => r.tip).length, percent: pct(ok.length, results.length)};
+}
+window.__jogo = {shuffle, buildDeck, norm, lev, judge, splitVerse, pct, summary};
+
+// --- tela ---
+function announce(t){ $('live').textContent = ''; setTimeout(() => { $('live').textContent = t; }, 30); }
+function swap(s){
+  st.screen = s;
+  for(const v of VIEWS) $(v).classList.toggle('hide', v !== s);
+  $('topBtn').classList.toggle('hide', s === 'review');
+  $('topBtn').textContent = (s === 'playing' || s === 'reveal') ? 'Sair' : 'Ver hinos';
+  window.scrollTo(0,0);
+  if(s === 'playing') $('answerInput').focus({preventScroll:true}); else $(s).focus({preventScroll:true});
+}
+function renderChoices(){
+  const box = $('roundChoices'); box.replaceChildren();
+  const opts = [10, 20, 30].filter(n => n < ITENS.length).concat([ITENS.length]);
+  if(!opts.includes(st.count)) st.count = opts[0];
+  for(const n of opts){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'choice'; b.dataset.count = n;
+    b.textContent = n === ITENS.length ? 'Todos' : n;
+    b.setAttribute('aria-label', n === ITENS.length ? `Todos os ${n} versos` : `${n} versos`);
+    b.setAttribute('aria-pressed', String(n === st.count));
+    b.addEventListener('click', () => { st.count = n; box.querySelectorAll('.choice').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
+    box.append(b);
+  }
+}
+function blankHTML(item){
+  const parts = splitVerse(item.verso, item.palavra);
+  const frag = document.createDocumentFragment();
+  frag.append(parts[0]);
+  const s = document.createElement('span'); s.className = 'blank';
+  s.textContent = st.tip ? item.palavra[0] + ' _'.repeat(item.palavra.length - 1) : '_ '.repeat(item.palavra.length).trim();
+  s.setAttribute('aria-label', `palavra de ${item.palavra.length} letras` + (st.tip ? `, começa com ${item.palavra[0]}` : ''));
+  frag.append(s, parts[2]);
+  return frag;
+}
+function start(){
+  st.deck = buildDeck(ITENS, st.count); st.i = 0; st.results = [];
+  if(!st.deck.length){ toast('Banco de hinos vazio.'); return; }
+  showQuestion();
+}
+function showQuestion(){
+  if(st.i >= st.deck.length){ showFinal(); return; }
+  const it = st.deck[st.i], n = st.deck.length, ok = st.results.filter(r => r.verdict !== 'errado').length;
+  st.tip = false;
+  $('counter').textContent = `VERSO ${st.i+1} / ${n}`;
+  $('liveScore').textContent = `${ok} ${ok===1?'ACERTO':'ACERTOS'}`;
+  $('hymnTitle').textContent = it.hino.titulo;
+  $('hymnSub').textContent = it.hino.hinario || '';
+  $('verseText').replaceChildren(blankHTML(it));
+  $('hintLine').textContent = `${it.palavra.length} letras`;
+  const p = Math.round(st.i/n*100); $('progressFill').style.width = p + '%'; $('progress').setAttribute('aria-valuenow', p);
+  $('answerInput').value = ''; $('tipBtn').disabled = false; $('sendBtn').disabled = false;
+  swap('playing');
+}
+function giveTip(){
+  if(st.screen !== 'playing' || st.tip) return;
+  st.tip = true; const it = st.deck[st.i];
+  $('verseText').replaceChildren(blankHTML(it));
+  $('hintLine').textContent = `${it.palavra.length} letras · começa com “${it.palavra[0].toUpperCase()}”`;
+  $('tipBtn').disabled = true; $('answerInput').focus();
+}
+function answer(typed, skipped){
+  if(st.screen !== 'playing' || st.results.length > st.i) return;   // trava: uma resposta por verso
+  if(!skipped && !norm(typed)){ toast('Digite a palavra ou toque em “Não sei”.'); $('answerInput').focus(); return; }
+  $('sendBtn').disabled = true;
+  const it = st.deck[st.i], n = st.deck.length;
+  const verdict = skipped ? 'errado' : judge(typed, it.palavra);
+  st.results.push({item: it, typed: skipped ? '' : typed.trim(), verdict, tip: st.tip});
+  $('revealCount').textContent = `VERSO ${st.i+1} / ${n}`;
+  $('resultBox').className = 'result ' + (verdict === 'certo' ? 'ok' : verdict === 'quase' ? 'near' : 'bad');
+  $('statusText').textContent = verdict === 'certo' ? 'VOCÊ ACERTOU' : verdict === 'quase' ? 'VALEU, POR POUCO' : skipped ? 'SEM RESPOSTA' : 'NÃO FOI DESSA VEZ';
+  $('announce').textContent = verdict === 'certo' ? 'MANDOU BEM!' : verdict === 'quase' ? 'QUASE!' : 'ERA OUTRA!';
+  $('rightAnswer').textContent = verdict === 'certo' ? `A palavra é “${it.palavra}”.` : verdict === 'quase' ? `Você digitou “${typed.trim()}”; o certo é “${it.palavra}”. Conta como acerto.` : (skipped ? '' : `Você digitou “${typed.trim()}”. `) + `A palavra é “${it.palavra}”.`;
+  const parts = splitVerse(it.verso, it.palavra);
+  const mark = document.createElement('mark'); mark.textContent = parts[1];
+  $('fullVerse').replaceChildren(parts[0], mark, parts[2]);
+  const h = it.hino;
+  $('reference').textContent = h.titulo + (h.hinario ? ' · ' + h.hinario : '');
+  $('credits').textContent = credits(h);
+  $('pd').textContent = 'Domínio público: ' + h.dominio_publico;
+  $('sourceLink').href = h.fonte_texto_url;
+  $('nextBtn').innerHTML = (st.i === n-1 ? 'VER RESULTADO' : 'PRÓXIMO VERSO') + ' <span aria-hidden="true">→</span>';
+  swap('reveal');
+  announce($('announce').textContent + ' ' + $('rightAnswer').textContent);
+}
+function credits(h){
+  const a = h.autor_original ? `Letra original: ${h.autor_original}` : '';
+  const t = h.tradutor_pt ? `Versão em português: ${h.tradutor_pt}` : '';
+  return [a, t].filter(Boolean).join(' · ');
+}
+function next(){ if(st.screen !== 'reveal') return; st.i++; showQuestion(); }
+function showFinal(){
+  const s = summary(st.results);
+  $('finalPercent').textContent = s.percent + '%';
+  $('dial').style.setProperty('--score', s.percent); $('dial').setAttribute('aria-label', `${s.percent}% de acerto`);
+  $('correctStat').textContent = `${s.ok}/${s.total}`; $('wrongStat').textContent = s.wrong; $('nearStat').textContent = s.near; $('tipStat').textContent = s.tip;
+  $('evaluation').textContent = s.percent >= 90 ? 'Turma de coral!' : s.percent >= 70 ? 'Sabem cantar de cor!' : s.percent >= 50 ? 'Metade do hinário na ponta da língua!' : 'Bora cantar esses hinos juntos!';
+  $('errorsBtn').disabled = s.wrong === 0;
+  swap('finished');
+}
+function quit(){ if(st.results.length && !confirm('Sair da partida? O placar atual será perdido.')) return; st.results = []; st.deck = []; swap('home'); }
+function openReview(onlyErrors){
+  st.back = st.screen; st.onlyErrors = onlyErrors; $('searchInput').value = '';
+  $('reviewEyebrow').textContent = onlyErrors ? 'Revisão da partida' : 'Revisão do organizador';
+  $('reviewTitle').textContent = onlyErrors ? 'Versos que escaparam' : 'Hinos do jogo';
+  $('reviewLead').textContent = onlyErrors ? 'Os versos que a turma não completou nesta partida.' : 'Todos os hinos e versos, com a palavra que falta destacada, autor, tradutor e fonte.';
+  swap('review'); renderReview();
+}
+function renderReview(){
+  const term = norm($('searchInput').value);
+  let groups;
+  if(st.onlyErrors){
+    const wrong = st.results.filter(r => r.verdict === 'errado').map(r => r.item);
+    groups = HINOS.map(h => ({h, ts: wrong.filter(w => w.hino.id === h.id)})).filter(g => g.ts.length);
+  } else groups = HINOS.map(h => ({h, ts: h.trechos}));
+  groups = groups.filter(g => !term || norm(g.h.titulo + (g.h.autor_original||'') + (g.h.tradutor_pt||'') + g.ts.map(t => t.verso).join('')).includes(term));
+  const nv = groups.reduce((s, g) => s + g.ts.length, 0);
+  $('reviewCount').textContent = `${groups.length} ${groups.length===1?'hino':'hinos'} · ${nv} ${nv===1?'verso':'versos'}`;
+  const box = $('reviewList'); box.replaceChildren();
+  for(const {h, ts} of groups){
+    const el = document.createElement('article'); el.className = 'item';
+    const t = document.createElement('h2'); t.textContent = h.titulo;
+    if(h.auditoria !== 'verificado'){ const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = ' PENDENTE'; t.append(' ', tg); }
+    const m = document.createElement('div'); m.className = 'meta';
+    m.textContent = [h.hinario, credits(h)].filter(Boolean).join(' · ');
+    const ol = document.createElement('ol');
+    for(const tr of ts){
+      const li = document.createElement('li'); const p = splitVerse(tr.verso, tr.palavra);
+      const mk = document.createElement('mark'); mk.textContent = p[1]; li.append(p[0], mk, p[2]); ol.append(li);
+    }
+    const pd = document.createElement('div'); pd.className = 'meta'; pd.textContent = 'Domínio público: ' + h.dominio_publico + ' ';
+    const a = document.createElement('a'); a.href = h.fonte_texto_url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'fonte ↗'; pd.append(a);
+    el.append(t, m, ol, pd); box.append(el);
+  }
+}
+function share(){
+  const s = summary(st.results);
+  const text = `COMPLETE O HINO\nA turma completou ${s.ok} de ${s.total} versos (${s.percent}%).` + (location.protocol.startsWith('http') ? `\n${location.origin}${location.pathname}` : '');
+  if(navigator.share) navigator.share({title:'Complete o Hino', text}).catch(()=>{});
+  else if(navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast('Resultado copiado.')).catch(() => toast(text));
+  else toast(text);
+}
+function toast(t){ document.querySelector('.toast')?.remove(); const el = document.createElement('div'); el.className = 'toast'; el.setAttribute('role','status'); el.textContent = t; document.body.append(el); setTimeout(() => el.remove(), 3200); }
+
+// --- ligação ---
+$('bankNum').innerHTML = `${HINOS.length} hinos <em>·</em> ${ITENS.length} versos`;
+$('draftBanner').classList.toggle('hide', !!(DATA.meta && DATA.meta.aprovado));
+$('legal').textContent = (DATA.meta && DATA.meta.aviso) || '';
+renderChoices();
+$('topBtn').addEventListener('click', () => (st.screen === 'playing' || st.screen === 'reveal') ? quit() : openReview(false));
+$('playBtn').addEventListener('click', start);
+$('answerForm').addEventListener('submit', e => { e.preventDefault(); answer($('answerInput').value, false); });
+$('tipBtn').addEventListener('click', giveTip);
+$('skipBtn').addEventListener('click', () => answer('', true));
+$('nextBtn').addEventListener('click', next);
+$('newGameBtn').addEventListener('click', () => swap('home'));
+$('shareBtn').addEventListener('click', share);
+$('errorsBtn').addEventListener('click', () => openReview(true));
+$('backBtn').addEventListener('click', () => swap(st.back === 'review' ? 'home' : st.back));
+$('searchInput').addEventListener('input', renderReview);
+document.addEventListener('keydown', e => {
+  if(st.screen === 'reveal' && e.key === 'Enter' && e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON'){ e.preventDefault(); next(); }
+});
+swap('home');
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+</script>
+</body>
+</html>

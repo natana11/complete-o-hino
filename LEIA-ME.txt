@@ -1,0 +1,10 @@
+COMPLETE O HINO — jogo para jovens (PWA)
+
+Aparece um verso de hino antigo com uma palavra faltando; a turma digita a palavra.
+Acento e maiúscula não contam; erro de uma letra em palavra de 5+ letras vale "quase" (conta como acerto).
+
+Publicar: suba TODO o conteúdo desta pasta numa hospedagem HTTPS (GitHub Pages, Netlify Drop).
+Instalar: iPhone > Safari > Compartilhar > Adicionar à Tela de Início. Android > Chrome > menu > Instalar app.
+Offline depois da primeira visita pelo link. Sem publicar: o index.html abre direto do computador.
+
+Só hinos em domínio público (autor e tradutor mortos até 1955, lei 9.610/98, art. 41).
